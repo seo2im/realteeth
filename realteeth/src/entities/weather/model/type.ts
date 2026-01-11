@@ -5,8 +5,8 @@ export type MetroParameters = {
   hourly: string;
   current: string;
   timezone: string;
-  start_date?: string;
-  end_date?: string;
+  start_date: string;
+  end_date: string;
 };
 export type MeteoResponse = {
   latitude: number;

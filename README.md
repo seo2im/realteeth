@@ -31,9 +31,23 @@
 ./realteeth.sh exec
 ```
 
+## 구현 기능
+
+1. 현재 위치 날씨 정보 알려주기
+
+- Geolocation Web API, vwworld Geocorder API, Open-Meteo API
+
+2. 지정 장소 날씨 정보 알려주기
+
+- vworld Geocorder API, Open-Meteo API
+
+3. 지정 장소 즐겨찾기 추가/삭제
+
+- localStorage
+
 ## 기술 스택
 
-### OPENAPI
+### 날씨 API
 
 대상: 공공데이터포탈, OpenWeatherMap, Open-Meteo
 
@@ -53,4 +67,20 @@
 - 무료
 - 별도의 서비스 신청 필요없음
 
-#
+### Geocoorder
+
+**vwwold**
+
+- 요청 및 응답 구조 직관적
+- 공공 데이터 포탈제공이라 국내 주소에 적합
+- 주소 -> geocode / geocode -> 주소 2 기능 모두 제공
+
+### Localstorage
+
+즐겨찾기 세이브를 위한 기능 필요
+
+**cookie**
+
+**localStorage**
+
+**client-save(cookie, localstorage) + server**

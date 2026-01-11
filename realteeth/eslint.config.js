@@ -21,5 +21,9 @@ export default defineConfig([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      'func-style': ['error', 'declaration', { allowArrowFunctions: false }],
+      'prefer-arrow-callback': 'off',
+    },
   },
 ]);
