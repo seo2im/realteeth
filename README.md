@@ -84,3 +84,9 @@
 **localStorage**
 
 **client-save(cookie, localstorage) + server**
+
+## 전역 상태 저장
+
+UI 상태 관리용 전역 상태 관리 모듈 필요
+
+### zustand

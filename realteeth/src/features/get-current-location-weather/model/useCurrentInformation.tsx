@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import useGeolocation from '../control-current-location/useGeolocation';
+import useGeolocation from '../../control-current-location/mode;l/useGeolocation';
 import { useQuery } from '@tanstack/react-query';
-import type { AddressResponse } from '../../entities/geocode/modal/type';
-import { getAdressQuery } from '../../entities/geocode/query/query';
-import { generateAdressParameter } from '../../entities/geocode/api/api';
-import type { MeteoResponse } from '../../entities/weather/model/type';
-import { getWeatherQuery } from '../../entities/weather/query';
-import { generateWeatherParameter } from '../../entities/weather/api/api';
-import type { WeatherUiData } from '../../pages/weather/weather.type';
+import type { AddressResponse } from '../../../entities/geocode/modal/type';
+import { getAdressQuery } from '../../../entities/geocode/query/query';
+import { generateAdressParameter } from '../../../entities/geocode/api/api';
+import type { MeteoResponse } from '../../../entities/weather/model/type';
+import { getWeatherQuery } from '../../../entities/weather/query';
+import { generateWeatherParameter } from '../../../entities/weather/api/api';
+import type { WeatherUiData } from '../../../pages/weather/weather.type';
 
 function useCurrentInformation(setUiData: (data: WeatherUiData) => void) {
   const [currentPosition, setCurrentPosition] = useState<{ latitude: number; longitude: number }>();

@@ -9,6 +9,9 @@ export type AutocompleteProps = {
   width?: string | number;
   maxResults?: number;
   debounceMs?: number;
+  onSearch?: (value: string) => void;
+  withSearchButton?: boolean;
+  searchButtonLabel?: string;
 };
 
 export function Autocomplete({
@@ -19,6 +22,9 @@ export function Autocomplete({
   width = '100%',
   maxResults = 50,
   debounceMs = 300,
+  onSearch,
+  withSearchButton = false,
+  searchButtonLabel = '검색',
 }: AutocompleteProps) {
   const [inputValue, setInputValue] = useState('');
   const [isOpen, setIsOpen] = useState(false);
@@ -112,6 +118,10 @@ export function Autocomplete({
         placeholder={placeholder}
         disabled={disabled}
         autoComplete="off"
+        withSearchIcon
+        withSearchButton={withSearchButton}
+        onSearchClick={() => onSearch?.(inputValue)}
+        searchButtonLabel={searchButtonLabel}
       />
       {isOpen && filteredSuggestions.length > 0 && (
         <div

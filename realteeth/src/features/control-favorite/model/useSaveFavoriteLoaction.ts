@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { FavoriteLocation } from '../../entities/favorite/model/type';
+import type { FavoriteLocation } from '../../../entities/favorite/model/type';
 
 const STORAGE_KEY = 'favorite_locations';
 

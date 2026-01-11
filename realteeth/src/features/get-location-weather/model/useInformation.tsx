@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import type { GeoResponse } from '../../entities/geocode/modal/type';
-import { generateGeoParamter } from '../../entities/geocode/api/api';
-import { getGeocodeQuery } from '../../entities/geocode/query/query';
-import { getWeatherQuery } from '../../entities/weather/query';
-import { generateWeatherParameter } from '../../entities/weather/api/api';
-import type { WeatherUiData } from '../../pages/weather/weather.type';
+import type { GeoResponse } from '../../../entities/geocode/modal/type';
+import { generateGeoParamter } from '../../../entities/geocode/api/api';
+import { getGeocodeQuery } from '../../../entities/geocode/query/query';
+import { getWeatherQuery } from '../../../entities/weather/query';
+import { generateWeatherParameter } from '../../../entities/weather/api/api';
+import type { WeatherUiData } from '../../../pages/weather/weather.type';
 
 function useInformation(setUiData: (data: WeatherUiData) => void) {
   const [address, setAddress] = useState<string>('');
@@ -15,7 +15,7 @@ function useInformation(setUiData: (data: WeatherUiData) => void) {
         address: address,
       })
     ),
-    enabled: false,
+    enabled: !!address,
   });
   const { data: weatherData } = useQuery({
     ...getWeatherQuery(

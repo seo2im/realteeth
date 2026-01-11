@@ -1,29 +1,33 @@
 import React, { useCallback, useId, useMemo, useState } from 'react';
-import type { InputSize, InputVariant, InputState } from './input.type';
+import type { InputState } from './input.type';
 
 type InputProps = {
   id?: string;
-  variant?: InputVariant;
   value: string;
   onChange: (value: string) => void;
-  size?: InputSize;
   placeholder?: string;
   disabled?: boolean;
   error?: boolean;
   className?: string;
+  withSearchIcon?: boolean;
+  withSearchButton?: boolean;
+  onSearchClick?: () => void;
+  searchButtonLabel?: string;
   ref?: React.Ref<HTMLInputElement>;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'size'>;
 
 export function Input({
   id,
-  variant = 'box',
-  size = 'md',
   placeholder = '',
   value,
   onChange,
   disabled,
   error,
   className = '',
+  withSearchIcon = true,
+  withSearchButton = false,
+  onSearchClick,
+  searchButtonLabel = '검색',
   ...inputProps
 }: InputProps) {
   const autoId = useId();
@@ -38,29 +42,11 @@ export function Input({
 
   // Tailwind 클래스 생성
   const inputClasses = useMemo(() => {
-    const baseClasses = 'w-full box-border outline-none transition-colors';
-
-    // Size 클래스
-    const sizeClasses = {
-      sm: 'text-sm leading-5 px-3 py-2.5',
-      md: 'text-base leading-6 px-4 py-3',
-      lg: 'text-lg px-5 py-3.5',
-    }[size];
-
-    // Variant 클래스
-    let variantClasses = '';
-    switch (variant) {
-      case 'underlined':
-        variantClasses = 'border-0 border-b border-gray-300 rounded-none bg-white text-black';
-        break;
-      case 'gray':
-        variantClasses = 'border-0 bg-gray-100 text-gray-500 rounded-lg';
-        break;
-      case 'box':
-      default:
-        variantClasses = 'border border-gray-300 rounded-lg bg-white text-black';
-        break;
-    }
+    const baseClasses = 'w-full box-border outline-none transition-colors flex-1 min-w-0';
+    const sizeClasses = 'text-base leading-6 px-4 py-3';
+    const variantClasses = withSearchButton
+      ? 'border-2 border-r-0 border-white/30 rounded-l-lg rounded-r-none text-white bg-white/10 font-bold'
+      : 'border-2 border-white/30 rounded-lg text-white bg-white/10 font-bold';
 
     // State 클래스
     let stateClasses = '';
@@ -69,10 +55,10 @@ export function Input({
         stateClasses = 'bg-gray-200 cursor-not-allowed text-gray-400 border-gray-300';
         break;
       case 'hover':
-        stateClasses = 'border-blue-500';
+        stateClasses = 'border-white/50';
         break;
       case 'focused':
-        stateClasses = 'border-blue-500';
+        stateClasses = 'border-white';
         break;
       case 'error':
         stateClasses = 'border-red-500 bg-red-50 text-red-700';
@@ -81,8 +67,10 @@ export function Input({
         break;
     }
 
-    return `${baseClasses} ${sizeClasses} ${variantClasses} ${stateClasses} ${className}`.trim();
-  }, [variant, size, state, className]);
+    const iconPadding = withSearchIcon ? 'pl-10' : '';
+    const buttonPadding = withSearchButton ? 'pr-4' : '';
+    return `${baseClasses} ${sizeClasses} ${variantClasses} ${stateClasses} ${iconPadding} ${buttonPadding} ${className}`.trim();
+  }, [state, withSearchIcon, withSearchButton, className]);
 
   const onMouseEnter = useCallback(() => {
     if (!disabled && !error) {
@@ -115,20 +103,49 @@ export function Input({
   );
 
   return (
-    <input
-      id={inputId}
-      type="text"
-      placeholder={placeholder}
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className={inputClasses}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      disabled={disabled}
-      {...inputProps}
-    />
+    <div className="relative w-full flex items-stretch">
+      {withSearchIcon && (
+        <svg
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/60"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+          aria-hidden="true"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21 21l-4.35-4.35M10 18a8 8 0 100-16 8 8 0 000 16z"
+          />
+        </svg>
+      )}
+      <input
+        id={inputId}
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className={inputClasses}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        disabled={disabled}
+        {...inputProps}
+      />
+      {withSearchButton && (
+        <button
+          type="button"
+          className="flex items-center justify-center rounded-r-lg rounded-l-none border-2 border-l-0 border-white/30 bg-white/15 px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/25 active:bg-white/30 disabled:opacity-50 disabled:cursor-not-allowed appearance-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40"
+          onClick={onSearchClick}
+          disabled={disabled}
+        >
+          {searchButtonLabel}
+        </button>
+      )}
+    </div>
   );
 }
 
