@@ -1,0 +1,22 @@
+export class WeatherError {
+  message: string;
+
+  constructor(message: string) {
+    this.message = message;
+  }
+}
+export class CurrentLocationError extends WeatherError {
+  constructor() {
+    super('현재 위치를 가져오는 데 실패했습니다.');
+  }
+}
+export class GeocodeError extends WeatherError {
+  constructor() {
+    super('주소 정보를 가져오는 데 실패했습니다.');
+  }
+}
+export class WeatherDataError extends WeatherError {
+  constructor() {
+    super('날씨 정보를 가져오는 데 실패했습니다.');
+  }
+}

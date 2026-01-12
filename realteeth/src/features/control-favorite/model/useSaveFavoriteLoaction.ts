@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import type { FavoriteLocation } from '../../../entities/favorite/model/type';
 
 const STORAGE_KEY = 'favorite_locations';
+const MAX_FAVORITES = 6;
 
 function getInitialFavorites(): FavoriteLocation[] {
   const stored = localStorage.getItem(STORAGE_KEY);
@@ -25,7 +26,21 @@ export function useSaveFavoriteLocation() {
       if (exists) {
         return prev;
       }
+      if (prev.length >= MAX_FAVORITES) {
+        console.warn(`최대 ${MAX_FAVORITES}개까지만 즐겨찾기할 수 있습니다.`);
+        return prev;
+      }
       const updated = [...prev, location];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
+  const patchFavorite = useCallback((location: FavoriteLocation) => {
+    setFavorites((prev) => {
+      const updated = prev.map((item) =>
+        item.id === location.id ? { ...item, ...location } : item
+      );
       localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
       return updated;
     });
@@ -69,5 +84,6 @@ export function useSaveFavoriteLocation() {
     clearFavorites,
     isFavorite,
     changeNameFavorite,
+    patchFavorite,
   };
 }

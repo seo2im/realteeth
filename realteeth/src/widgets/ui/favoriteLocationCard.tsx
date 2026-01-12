@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import type { FavoriteLocation } from '../../entities/favorite/model/type';
 import { useQuery } from '@tanstack/react-query';
 import { getWeatherQuery } from '../../entities/weather/query';
@@ -6,14 +6,12 @@ import { generateWeatherParameter } from '../../entities/weather/api/api';
 import type { MeteoResponse } from '../../entities/weather/model/type';
 import useContextMenuStore from '../model/contextMenuStore';
 import { ContextMenu } from '../../shared/ui/contextMenu/contextMenu';
+import RenameModal from './renameModal';
 
 type FavoriteLocationProps = FavoriteLocation & {
-  onClick?: (address: string) => void;
-  onDelete?: (id: string) => void;
-  setFavoriteLocations?: (
-    locations: FavoriteLocation[] | ((prev: FavoriteLocation[]) => FavoriteLocation[])
-  ) => void;
-  deleteFavoriteLocation?: (id: string) => void;
+  onClick: (address: string) => void;
+  patchFavorite: (location: FavoriteLocation) => void;
+  deleteFavorite: (id: string) => void;
 };
 function FavoriteLocationCard({
   id,
@@ -21,8 +19,8 @@ function FavoriteLocationCard({
   address,
   geocode,
   weather,
-  setFavoriteLocations,
-  deleteFavoriteLocation,
+  patchFavorite,
+  deleteFavorite,
   onClick,
 }: FavoriteLocationProps) {
   const { data } = useQuery<MeteoResponse>({
@@ -34,32 +32,31 @@ function FavoriteLocationCard({
     ),
   });
   useEffect(() => {
-    if (data && setFavoriteLocations) {
-      setFavoriteLocations((prev: FavoriteLocation[]) =>
-        prev.map((location) =>
-          location.id === id
-            ? {
-                ...location,
-                weather: {
-                  current: {
-                    temperature_2m: data.current.temperature_2m,
-                  },
-                  daily: {
-                    temperature_2m_max: data.daily.temperature_2m_max,
-                    temperature_2m_min: data.daily.temperature_2m_min,
-                  },
-                },
-              }
-            : location
-        )
-      );
+    if (data) {
+      patchFavorite({
+        id,
+        name,
+        address,
+        geocode,
+        weather: {
+          current: {
+            temperature_2m: data.current.temperature_2m,
+          },
+          daily: {
+            temperature_2m_max: data.daily.temperature_2m_max,
+            temperature_2m_min: data.daily.temperature_2m_min,
+          },
+        },
+      });
     }
-  }, [data, id, setFavoriteLocations]);
+  }, [data, id, patchFavorite, name, address, geocode]);
   const open = useContextMenuStore((state) => state.open);
   const x = useContextMenuStore((state) => state.x);
   const y = useContextMenuStore((state) => state.y);
   const contextMenuId = useContextMenuStore((state) => state.id);
   const close = useContextMenuStore((state) => state.close);
+
+  const [isRenameModalOpen, setIsRenameModalOpen] = useState<boolean>(false);
 
   return (
     <div
@@ -110,17 +107,29 @@ function FavoriteLocationCard({
       </div>
       {id === contextMenuId && (
         <ContextMenu position={{ x, y }} visible={true} onClose={close}>
-          <div className="text-black" onClick={() => {}}>
+          <div className="text-black" onClick={() => setIsRenameModalOpen(true)}>
             이름 변경하기
           </div>
-          <div
-            className="text-red-600"
-            onClick={() => deleteFavoriteLocation && deleteFavoriteLocation(id)}
-          >
+          <div className="text-red-600" onClick={() => deleteFavorite(id)}>
             삭제하기
           </div>
         </ContextMenu>
       )}
+      <RenameModal
+        isOpen={isRenameModalOpen}
+        currentName={name}
+        onRename={(newName: string) => {
+          patchFavorite({
+            id,
+            name: newName,
+            address,
+            geocode,
+            weather,
+          });
+          setIsRenameModalOpen(false);
+        }}
+        onClose={() => setIsRenameModalOpen(false)}
+      />
     </div>
   );
 }

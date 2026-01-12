@@ -12,7 +12,7 @@ function WeatherPage() {
   const [uiData, setUiData] = useState<WeatherUiData | undefined>(undefined);
   useCurrentInformation(setUiData);
   const { setAddress } = useInformation(setUiData);
-  const { favorites, saveFavorite, deleteFavorite } = useSaveFavoriteLocation();
+  const { favorites, saveFavorite, deleteFavorite, patchFavorite } = useSaveFavoriteLocation();
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-400 via-blue-500 to-blue-600 p-4 md:p-6 lg:p-8 min-w-screen">
@@ -27,7 +27,8 @@ function WeatherPage() {
         <DailyWeather weather={uiData?.weather} />
         <Favorites
           favorites={favorites}
-          deleteFavoriteLocation={deleteFavorite}
+          deleteFavorite={deleteFavorite}
+          patchFavorite={patchFavorite}
           setAddress={setAddress}
         />
       </div>
