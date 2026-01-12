@@ -1,8 +1,9 @@
 import { getQueryString } from '@shared/utils/url';
 import type { AddressParameters, GeoParameters } from '@entities/geocode/model/type';
+import { VWORLD_API_BASE } from '@entities/geocode/constant';
 
 export async function getGeo(params: GeoParameters) {
-  const response = await fetch(`/api/vworld${getQueryString(params)}`, {
+  const response = await fetch(`${VWORLD_API_BASE}${getQueryString(params)}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -18,7 +19,7 @@ export async function getGeo(params: GeoParameters) {
   return data;
 }
 export async function getAddress(params: AddressParameters) {
-  const response = await fetch(`/api/vworld${getQueryString(params)}`, {
+  const response = await fetch(`${VWORLD_API_BASE}${getQueryString(params)}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
