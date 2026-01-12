@@ -11,7 +11,7 @@ import Favorites from './favorites';
 function WeatherPage() {
   const [uiData, setUiData] = useState<WeatherUiData | undefined>(undefined);
   useCurrentInformation(setUiData);
-  const { setAddress } = useInformation(setUiData);
+  const { setAddress, isLoading } = useInformation(setUiData);
   const { favorites, saveFavorite, deleteFavorite, patchFavorite } = useSaveFavoriteLocation();
 
   return (
@@ -22,7 +22,9 @@ function WeatherPage() {
           weather={uiData?.weather}
           address={uiData?.address}
           geocode={uiData?.geocode}
+          error={uiData?.error}
           saveFavorite={saveFavorite}
+          isLoading={isLoading}
         />
         <DailyWeather weather={uiData?.weather} />
         <Favorites

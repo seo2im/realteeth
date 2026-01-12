@@ -41,13 +41,16 @@ export function DailyWeather({ weather }: { weather?: WeatherUiData['weather'] }
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'rgba(255,255,255,0.95)',
+                  backgroundColor: 'white',
                   border: 'none',
                   borderRadius: '12px',
                   color: '#1e40af',
                   padding: '8px 12px',
                 }}
-                formatter={(value: number | undefined) => [`${value}°C`, `기온`]}
+                itemStyle={{
+                  color: '#1e40af',
+                }}
+                formatter={(value: number | undefined) => [`${value}°C`, '기온']}
               />
               <Line
                 type="monotone"

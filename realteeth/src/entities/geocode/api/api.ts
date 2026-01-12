@@ -12,6 +12,9 @@ export async function getGeo(params: GeoParameters) {
     throw new Error('Network response was not ok');
   }
   const data = await response.json();
+  if (data.response.status !== 'OK') {
+    throw new Error('Geocode API returned an error');
+  }
   return data;
 }
 export async function getAddress(params: AddressParameters) {
@@ -25,6 +28,9 @@ export async function getAddress(params: AddressParameters) {
     throw new Error('Network response was not ok');
   }
   const data = await response.json();
+  if (data.response.status !== 'OK') {
+    throw new Error('Geocode API returned an error');
+  }
   return data;
 }
 export function generateGeoParamter({ address }: { address: string }): GeoParameters {

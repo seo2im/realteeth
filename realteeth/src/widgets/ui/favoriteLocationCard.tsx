@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { FavoriteLocation } from '../../entities/favorite/model/type';
 import { useQuery } from '@tanstack/react-query';
 import { getWeatherQuery } from '../../entities/weather/query';
@@ -7,6 +7,7 @@ import type { MeteoResponse } from '../../entities/weather/model/type';
 import useContextMenuStore from '../model/contextMenuStore';
 import { ContextMenu } from '../../shared/ui/contextMenu/contextMenu';
 import RenameModal from './renameModal';
+import { useNotify } from '../../features/notify/model/useNotify';
 
 type FavoriteLocationProps = FavoriteLocation & {
   onClick: (address: string) => void;
@@ -31,6 +32,17 @@ function FavoriteLocationCard({
       })
     ),
   });
+  const { show } = useNotify();
+  const open = useContextMenuStore((state) => state.open);
+  const x = useContextMenuStore((state) => state.x);
+  const y = useContextMenuStore((state) => state.y);
+  const contextMenuId = useContextMenuStore((state) => state.id);
+  const close = useContextMenuStore((state) => state.close);
+  const onClickDelete = useCallback(() => {
+    close();
+    deleteFavorite(id);
+    show({ id: 'favorite_deleted', type: 'warning', message: '즐겨찾기에서 삭제되었습니다.' });
+  }, [deleteFavorite, id, show, close]);
   useEffect(() => {
     if (data) {
       patchFavorite({
@@ -50,13 +62,11 @@ function FavoriteLocationCard({
       });
     }
   }, [data, id, patchFavorite, name, address, geocode]);
-  const open = useContextMenuStore((state) => state.open);
-  const x = useContextMenuStore((state) => state.x);
-  const y = useContextMenuStore((state) => state.y);
-  const contextMenuId = useContextMenuStore((state) => state.id);
-  const close = useContextMenuStore((state) => state.close);
-
   const [isRenameModalOpen, setIsRenameModalOpen] = useState<boolean>(false);
+  const onModalOpen = useCallback(() => {
+    close();
+    setIsRenameModalOpen(true);
+  }, [close]);
 
   return (
     <div
@@ -107,10 +117,10 @@ function FavoriteLocationCard({
       </div>
       {id === contextMenuId && (
         <ContextMenu position={{ x, y }} visible={true} onClose={close}>
-          <div className="text-black" onClick={() => setIsRenameModalOpen(true)}>
+          <div className="text-black" onClick={onModalOpen}>
             이름 변경하기
           </div>
-          <div className="text-red-600" onClick={() => deleteFavorite(id)}>
+          <div className="text-red-600" onClick={onClickDelete}>
             삭제하기
           </div>
         </ContextMenu>

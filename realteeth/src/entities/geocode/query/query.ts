@@ -7,6 +7,7 @@ export function getGeocodeQuery(params: GeoParameters) {
     queryKey: ['geocode', params.address],
     queryFn: async () => getGeo(params),
     staleTime: FRESH_WINDOW,
+    retry: false,
   };
 }
 export function getAdressQuery(params: AddressParameters) {
@@ -14,5 +15,6 @@ export function getAdressQuery(params: AddressParameters) {
     queryKey: ['address', params.point],
     queryFn: async () => getAddress(params),
     staleTime: FRESH_WINDOW,
+    retry: false,
   };
 }

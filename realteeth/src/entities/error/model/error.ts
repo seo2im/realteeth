@@ -12,11 +12,11 @@ export class CurrentLocationError extends WeatherError {
 }
 export class GeocodeError extends WeatherError {
   constructor() {
-    super('주소 정보를 가져오는 데 실패했습니다.');
+    super('해당 장소의 정보가 제공되지 않습니다.');
   }
 }
 export class WeatherDataError extends WeatherError {
   constructor() {
-    super('날씨 정보를 가져오는 데 실패했습니다.');
+    super('해당 장소의 정보가 제공되지 않습니다.');
   }
 }

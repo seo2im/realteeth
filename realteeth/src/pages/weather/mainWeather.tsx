@@ -1,8 +1,5 @@
 import type { FavoriteLocation } from '../../entities/favorite/model/type';
-import { Alert } from '../../shared/ui/alert/alert';
-import { Snackbar } from '../../shared/ui/snackbar/snackbar';
 import { Spinner } from '../../shared/ui/spinner/spinner';
-import useSnackbarStore, { SnackbarIDs } from '../../widgets/model/snackbarStore';
 import type { WeatherUiData } from './weather.type';
 
 export function MainWeather({
@@ -11,27 +8,23 @@ export function MainWeather({
   geocode,
   error,
   saveFavorite,
+  isLoading,
 }: {
   weather?: WeatherUiData['weather'];
   address?: string;
   geocode?: WeatherUiData['geocode'];
   error?: WeatherUiData['error'];
-  saveFavorite?: (favorite: FavoriteLocation) => void;
+  saveFavorite?: (favorite: FavoriteLocation) => string;
+  isLoading: boolean;
 }) {
-  const snackbarId = useSnackbarStore((state) => state.id);
-  const open = useSnackbarStore((state) => state.open);
-  const close = useSnackbarStore((state) => state.close);
-
   return (
     <div className="bg-white/20 backdrop-blur-md rounded-2xl md:rounded-3xl p-6 md:p-8 text-white shadow-xl">
-      {!weather ? (
+      {!weather || isLoading ? (
         <div className="h-75 flex justify-center items-center">
           <Spinner size="lg" />
         </div>
       ) : error ? (
-        <div className="flex justify-center items-center h-75">
-          <Alert type="danger" message={error.message} />
-        </div>
+        <div className="flex justify-center items-center h-75">{error.message}</div>
       ) : (
         <div className="flex flex-col items-center text-center gap-4 md:gap-6">
           <div className="flex items-center gap-2 text-white/90">
@@ -58,7 +51,6 @@ export function MainWeather({
                     },
                   },
                 });
-                open(SnackbarIDs.FAVORITE_SAVED);
               }
             }}
             className="ml-2 p-1.5 md:p-2 rounded-full hover:bg-white/10 transition-all"
@@ -77,14 +69,6 @@ export function MainWeather({
             <span className="text-base md:text-lg">최고 {weather?.daily.temperature_2m_max}°</span>
           </div>
         </div>
-      )}
-      {snackbarId === SnackbarIDs.FAVORITE_SAVED && (
-        <Snackbar
-          message={<Alert type="success" message="즐겨찾기에 추가되었습니다!" />}
-          onClose={close}
-          duration={3000}
-          snackbarPosition="bottom"
-        />
       )}
     </div>
   );
