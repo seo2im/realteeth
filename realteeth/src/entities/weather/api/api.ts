@@ -1,6 +1,6 @@
-import { getQueryString } from '../../../shared/utils/url';
-import { CURRENT_OPTIONS, DAILY_OPTIONS, HOURLY_OPTIONS } from '../constant';
-import type { MetroParameters } from '../model/type';
+import { getQueryString } from '@shared/utils/url';
+import { CURRENT_OPTIONS, DAILY_OPTIONS, HOURLY_OPTIONS } from '@entities/weather/constant';
+import type { MetroParameters } from '@entities/weather/model/type';
 
 export async function getWeather(params: MetroParameters) {
   const response = await fetch(`https://api.open-meteo.com/v1/forecast${getQueryString(params)}`, {

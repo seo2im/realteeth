@@ -1,5 +1,5 @@
-import { getQueryString } from '../../../shared/utils/url';
-import type { AddressParameters, GeoParameters } from '../modal/type';
+import { getQueryString } from '@shared/utils/url';
+import type { AddressParameters, GeoParameters } from '@entities/geocode/model/type';
 
 export async function getGeo(params: GeoParameters) {
   const response = await fetch(`/api/vworld${getQueryString(params)}`, {

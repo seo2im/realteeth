@@ -1,14 +1,12 @@
 import { useState } from 'react';
-import useCurrentInformation from '../../features/get-current-location-weather/model/useCurrentInformation';
-import useInformation from '../../features/get-location-weather/model/useInformation';
-import type { WeatherUiData } from './weather.type';
-import { useSaveFavoriteLocation } from '../../features/control-favorite/model/useSaveFavoriteLoaction';
-import Searchbar from './searchbar';
-import { DailyWeather } from './dailyWeather';
-import { MainWeather } from './mainWeather';
-import Favorites from './favorites';
 
-function WeatherPage() {
+import type { WeatherUiData } from '@entities/uiData';
+import { useSaveFavoriteLocation } from '@features/favorite-management';
+import { Searchbar, DailyWeather, MainWeather, Favorites } from './ui';
+import { useCurrentInformation } from '@features/weather-by-current';
+import { useInformation } from '@features/weather-by-location';
+
+export function WeatherPage() {
   const [uiData, setUiData] = useState<WeatherUiData | undefined>(undefined);
   useCurrentInformation(setUiData);
   const { setAddress, isLoading } = useInformation(setUiData);
@@ -37,5 +35,3 @@ function WeatherPage() {
     </div>
   );
 }
-
-export default WeatherPage;

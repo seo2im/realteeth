@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import Portal from '../portal/portal';
+import { Portal } from '@shared/ui/portal/portal';
 import { modalAnimationKeyframes } from './modal.style';
 import type {
   ModalAnimationTypes,

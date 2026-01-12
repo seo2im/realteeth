@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import useNotifyStore from './notiftyStore';
-import type { AlertType } from '../../../shared/ui/alert/alert.type';
+import { useNotifyStore } from './notifyStore';
+import type { AlertType } from '@shared/ui/alert/alert.type';
 
 export function useNotify() {
   const open = useNotifyStore((state) => state.open);

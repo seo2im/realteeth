@@ -1,6 +1,6 @@
-import { FRESH_WINDOW } from '../../../shared/constant';
-import { getAddress, getGeo } from '../api/api';
-import type { AddressParameters, GeoParameters } from '../modal/type';
+import { FRESH_WINDOW } from '@shared/constant';
+import { getAddress, getGeo } from '@entities/geocode/api/api';
+import type { AddressParameters, GeoParameters } from '@entities/geocode/model/type';
 
 export function getGeocodeQuery(params: GeoParameters) {
   return {

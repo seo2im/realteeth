@@ -6,7 +6,7 @@ type Props = {
   root?: HTMLElement;
   children: React.ReactNode;
 };
-function Portal({ children, root }: Props) {
+export function Portal({ children, root }: Props) {
   const [mounted, setMounted] = useState<boolean>(false);
   useEffect(() => {
     setMounted(true);
@@ -18,4 +18,3 @@ function Portal({ children, root }: Props) {
 
   return mounted ? createPortal(children, root || document.body) : null;
 }
-export default Portal;

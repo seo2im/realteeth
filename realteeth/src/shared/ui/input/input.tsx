@@ -148,5 +148,3 @@ export function Input({
     </div>
   );
 }
-
-export default Input;

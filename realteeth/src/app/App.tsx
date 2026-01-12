@@ -1,8 +1,8 @@
-import WeatherPage from '../pages/weather/weather';
-import Notify from '../widgets/ui/notify';
-import QuertProvider from './provider/QuertProvider';
+import { WeatherPage } from '@pages/weather/weather';
+import { Notify } from '@widgets/notification';
+import { QuertProvider } from './provider/QuertProvider';
 
-function App() {
+export function App() {
   return (
     <QuertProvider>
       <WeatherPage />
@@ -10,5 +10,3 @@ function App() {
     </QuertProvider>
   );
 }
-
-export default App;

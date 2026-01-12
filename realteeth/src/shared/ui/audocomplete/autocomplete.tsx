@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useMemo, useEffect } from 'react';
-import Input from '../input/input';
+import { Input } from '@shared/ui/input/input';
 
 export type AutocompleteProps = {
   onSelect: (value: string) => void;
@@ -34,7 +34,6 @@ export function Autocomplete({
   const listRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<number | undefined>(undefined);
 
-  // 메모이제이션된 필터링 함수
   const filterData = useMemo(
     () => (query: string) => {
       if (!query || query.length === 0) {
@@ -46,7 +45,6 @@ export function Autocomplete({
     [data, maxResults]
   );
 
-  // Debounced 검색
   useEffect(() => {
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
