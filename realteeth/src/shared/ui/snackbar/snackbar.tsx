@@ -1,60 +1,42 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   getAnimationStyle,
   getExitAnimationStyle,
   snackbarAnimationKeyframes,
-  getSnackbarClasses,
-  getPositionClasses,
-  getSnackbarDragClasses,
 } from './snackbar.style';
-import type { SnackbarAnimation, SnackbarPostion } from './snackbar.type';
+import type { SnackbarAnimation } from './snackbar.type';
 
 export type SnackbarProps = {
   message: ReactNode;
   duration?: number;
   onClose?: () => void;
-  snackbarPosition?: SnackbarPostion;
   snackbarAnimation?: SnackbarAnimation;
-  dragable?: boolean;
 };
 export function Snackbar({
   message,
   duration = 3000,
   onClose,
   snackbarAnimation = 'slide',
-  snackbarPosition = 'bottom',
-  dragable = false,
 }: SnackbarProps) {
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isAnimating, setIsAnimating] = useState(true);
   const [isClosing, setIsClosing] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const dragStartRef = useRef({ x: 0, y: 0 });
 
   const baseClasses = useMemo(() => {
-    const positionClasses = getPositionClasses(snackbarPosition);
-    const cursorClass = dragable ? (isDragging ? 'cursor-grabbing' : 'cursor-grab') : '';
-    return `${getSnackbarClasses()}${positionClasses} ${cursorClass}`;
-  }, [snackbarPosition, dragable, isDragging]);
+    const positionClasses = 'bottom-5 left-1/2';
+    const snackbarClasses = 'fixed text-white shadow-lg max-w-xs md:max-w-sm lg:max-w-md z-[1000]';
+    return `${snackbarClasses} ${positionClasses}`;
+  }, []);
 
   const animationClasses = useMemo(() => {
-    if (!isDragging) {
-      if (isClosing) {
-        return getExitAnimationStyle(snackbarAnimation, snackbarPosition);
-      } else if (isAnimating) {
-        return getAnimationStyle(snackbarAnimation, snackbarPosition);
-      }
+    if (isClosing) {
+      return getExitAnimationStyle(snackbarAnimation);
+    } else if (isAnimating) {
+      return getAnimationStyle(snackbarAnimation);
     }
-    return '';
-  }, [snackbarAnimation, snackbarPosition, isDragging, isAnimating, isClosing]);
-
-  const dragStyle = useMemo(() => {
-    if (isDragging || dragOffset.x !== 0 || dragOffset.y !== 0) {
-      return getSnackbarDragClasses(snackbarPosition, dragOffset, isDragging);
-    }
-    return {};
-  }, [snackbarPosition, dragOffset, isDragging]);
+    // 애니메이션이 없을 때만 Tailwind로 중앙 정렬
+    return '-translate-x-1/2';
+  }, [snackbarAnimation, isAnimating, isClosing]);
 
   const handleClose = useCallback(() => {
     setIsClosing(true);
@@ -81,7 +63,7 @@ export function Snackbar({
   }, [isClosing]);
 
   useEffect(() => {
-    if (!dragable && !isClosing) {
+    if (!isClosing) {
       timerRef.current = setTimeout(() => {
         handleClose();
       }, duration);
@@ -92,99 +74,12 @@ export function Snackbar({
         clearTimeout(timerRef.current);
       }
     };
-  }, [duration, handleClose, isClosing, dragable]);
-
-  const handleMouseDown = useCallback(
-    (e: React.MouseEvent) => {
-      if (!dragable || isAnimating || isClosing) return;
-
-      setIsDragging(true);
-      dragStartRef.current = {
-        x: e.clientX - dragOffset.x,
-        y: e.clientY - dragOffset.y,
-      };
-
-      // 타이머 일시 중지
-      if (timerRef.current) {
-        clearTimeout(timerRef.current);
-        timerRef.current = null;
-      }
-    },
-    [dragable, isAnimating, dragOffset, isClosing]
-  );
-
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (!isDragging || !dragable) return;
-
-      const newX = e.clientX - dragStartRef.current.x;
-      const newY = e.clientY - dragStartRef.current.y;
-
-      setDragOffset({ x: newX, y: newY });
-    },
-    [isDragging, dragable]
-  );
-
-  const handleMouseUp = useCallback(() => {
-    if (!isDragging || !dragable || isClosing) return;
-
-    setIsDragging(false);
-
-    // 포지션에 따라 닫히는 방향 결정
-    const isTopPosition =
-      snackbarPosition === 'top' ||
-      snackbarPosition === 'top-left' ||
-      snackbarPosition === 'top-right';
-    const isBottomPosition =
-      snackbarPosition === 'bottom' ||
-      snackbarPosition === 'bottom-left' ||
-      snackbarPosition === 'bottom-right';
-
-    let shouldClose = false;
-
-    if (isTopPosition) {
-      shouldClose = dragOffset.y < -30;
-    } else if (isBottomPosition) {
-      shouldClose = dragOffset.y > 30;
-    }
-
-    if (shouldClose) {
-      handleClose();
-    } else {
-      // 원래 위치로 복귀
-      setDragOffset({ x: 0, y: 0 });
-
-      // 타이머 재시작
-      if (!timerRef.current) {
-        timerRef.current = setTimeout(() => {
-          handleClose();
-        }, duration);
-      }
-    }
-  }, [isDragging, dragable, dragOffset, handleClose, duration, isClosing, snackbarPosition]);
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
+  }, [duration, handleClose, isClosing]);
 
   return (
     <>
       <style>{snackbarAnimationKeyframes[snackbarAnimation]}</style>
-      <div
-        className={`${baseClasses} ${animationClasses}`.trim()}
-        style={dragStyle}
-        onMouseDown={handleMouseDown}
-      >
-        {message}
-      </div>
+      <div className={`${baseClasses} ${animationClasses}`.trim()}>{message}</div>
     </>
   );
 }
