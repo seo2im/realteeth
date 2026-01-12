@@ -1,5 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
-import Portal from '../portal/portal';
+import React, { Fragment, useCallback, useEffect, useRef, useState } from 'react';
 import { ContextMenuItem } from './contextMenuItem';
 
 export type ContextMenuProps = {
@@ -19,35 +18,50 @@ export function ContextMenu({
   const menuRef = useRef<HTMLDivElement>(null);
   const [menuPosition, setMenuPosition] = useState({ x: position.x, y: position.y });
 
+  useEffect(() => {
+    if (!visible) return;
+
+    function handleOutsideClick(event: MouseEvent) {
+      if (!menuRef.current) return;
+      if (menuRef.current.contains(event.target as Node)) return;
+      onClose();
+    }
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [visible, onClose]);
+
   const handleMenuRef = useCallback(
     (node: HTMLDivElement | null) => {
       if (node && visible) {
         menuRef.current = node;
 
         const menuRect = node.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
+        const parentElement = node.parentElement;
+        if (!parentElement) return;
+
+        const parentRect = parentElement.getBoundingClientRect();
 
         let adjustedX = position.x;
         let adjustedY = position.y;
 
-        // 오른쪽 화면 밖으로 나가는 경우
-        if (adjustedX + menuRect.width > viewportWidth) {
-          adjustedX = viewportWidth - menuRect.width - 10;
+        // 부모 요소의 오른쪽 경계를 넘는 경우
+        if (adjustedX + menuRect.width > parentRect.width) {
+          adjustedX = parentRect.width - menuRect.width - 10;
         }
 
-        // 왼쪽 화면 밖으로 나가는 경우
-        if (adjustedX < 10) {
+        // 부모 요소의 왼쪽 경계를 넘는 경우
+        if (adjustedX < 0) {
           adjustedX = 10;
         }
 
-        // 아래쪽 화면 밖으로 나가는 경우
-        if (adjustedY + menuRect.height > viewportHeight) {
-          adjustedY = viewportHeight - menuRect.height - 10;
+        // 부모 요소의 아래쪽 경계를 넘는 경우
+        if (adjustedY + menuRect.height > parentRect.height) {
+          adjustedY = position.y - menuRect.height; // 버튼 위쪽에 표시
         }
 
-        // 위쪽 화면 밖으로 나가는 경우
-        if (adjustedY < 10) {
+        // 부모 요소의 위쪽 경계를 넘는 경우
+        if (adjustedY < 0) {
           adjustedY = 10;
         }
 
@@ -60,27 +74,25 @@ export function ContextMenu({
   if (!visible) return null;
 
   return (
-    <Portal>
-      <div onClick={onClose} className="absolute inset-0 z-1000 w-full h-full">
-        <div
-          ref={handleMenuRef}
-          onClick={(e) => e.stopPropagation()}
-          className="fixed z-1000 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.2)] rounded-lg"
-          style={{
-            top: menuPosition.y,
-            left: menuPosition.x,
-          }}
-        >
-          {children.map((child, index) => (
-            <>
-              {dividerIndex && dividerIndex.includes(index) && (
-                <div className="h-px bg-black/10 my-1" />
-              )}
-              <ContextMenuItem key={index}>{child}</ContextMenuItem>
-            </>
-          ))}
-        </div>
+    <div onClick={onClose} className="absolute inset-0 z-10 w-full h-full">
+      <div
+        ref={handleMenuRef}
+        onClick={(e) => e.stopPropagation()}
+        className="absolute z-20 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.2)] rounded-lg w-40 md:w-48 "
+        style={{
+          top: menuPosition.y,
+          left: menuPosition.x,
+        }}
+      >
+        {children.map((child, index) => (
+          <Fragment key={index}>
+            {dividerIndex && dividerIndex.includes(index) && (
+              <div className="h-px bg-black/10 my-1" />
+            )}
+            <ContextMenuItem>{child}</ContextMenuItem>
+          </Fragment>
+        ))}
       </div>
-    </Portal>
+    </div>
   );
 }

@@ -64,7 +64,7 @@ function FavoriteLocationCard({
   return (
     <div
       key={id}
-      className="bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 md:p-6 hover:bg-white/20 transition-all cursor-pointer border border-white/10"
+      className="bg-white/10 backdrop-blur-sm rounded-xl md:rounded-2xl p-4 md:p-6 hover:bg-white/20 transition-all cursor-pointer border border-white/10 relative"
       onClick={() => onClick && onClick(address)}
     >
       <div className="flex items-start justify-between mb-3 md:mb-4">
@@ -76,7 +76,16 @@ function FavoriteLocationCard({
           aria-label="메뉴"
           onClick={(e) => {
             e.stopPropagation();
-            open({ x: e.clientX, y: e.clientY, id: id });
+            const button = e.currentTarget;
+            const card = button.closest('.relative');
+            if (card) {
+              const cardRect = card.getBoundingClientRect();
+              const buttonRect = button.getBoundingClientRect();
+              // 버튼 아래 왼쪽 정렬
+              const relativeX = buttonRect.left - cardRect.left;
+              const relativeY = buttonRect.bottom - cardRect.top;
+              open({ x: relativeX, y: relativeY, id: id });
+            }
           }}
         >
           <svg
@@ -105,7 +114,7 @@ function FavoriteLocationCard({
             이름 변경하기
           </div>
           <div
-            className="text-black"
+            className="text-red-600"
             onClick={() => deleteFavoriteLocation && deleteFavoriteLocation(id)}
           >
             삭제하기
