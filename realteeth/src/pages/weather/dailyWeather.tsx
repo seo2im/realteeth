@@ -19,7 +19,7 @@ export function DailyWeather({ weather }: { weather?: WeatherUiData['weather'] }
     <div className="bg-white/20 backdrop-blur-md rounded-2xl md:rounded-3xl p-6 md:p-8 text-white shadow-xl">
       <h2 className="text-xl md:text-2xl mb-4 md:mb-6">시간별 기온</h2>
       <div className="w-full" style={{ height: '280px' }}>
-        <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer initialDimension={{ width: 1, height: 1 }}>
           <LineChart data={hourlyData} margin={{ top: 5, right: 10, left: -20, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
             <XAxis
