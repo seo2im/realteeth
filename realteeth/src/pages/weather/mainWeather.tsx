@@ -14,7 +14,7 @@ export function MainWeather({
   address?: string;
   geocode?: WeatherUiData['geocode'];
   error?: WeatherUiData['error'];
-  saveFavorite?: (favorite: FavoriteLocation) => string;
+  saveFavorite: (favorite: FavoriteLocation) => void;
   isLoading: boolean;
 }) {
   return (
@@ -32,26 +32,24 @@ export function MainWeather({
           </div>
           <button
             onClick={() => {
-              if (saveFavorite) {
-                saveFavorite({
-                  id: `${weather?.current.temperature_2m}-${weather?.daily.temperature_2m_max[0]}-${weather?.daily.temperature_2m_min[0]}`,
-                  name: address || 'Unnamed Location',
-                  address: address || '',
-                  geocode: {
-                    latitude: geocode?.latitude || 0,
-                    longitude: geocode?.longitude || 0,
+              saveFavorite({
+                id: `${geocode?.latitude}-${geocode?.longitude}`,
+                name: address || 'Unnamed Location',
+                address: address || '',
+                geocode: {
+                  latitude: geocode?.latitude || 0,
+                  longitude: geocode?.longitude || 0,
+                },
+                weather: {
+                  current: {
+                    temperature_2m: weather?.current.temperature_2m || 0,
                   },
-                  weather: {
-                    current: {
-                      temperature_2m: weather?.current.temperature_2m || 0,
-                    },
-                    daily: {
-                      temperature_2m_max: weather?.daily.temperature_2m_max || [],
-                      temperature_2m_min: weather?.daily.temperature_2m_min || [],
-                    },
+                  daily: {
+                    temperature_2m_max: weather?.daily.temperature_2m_max || [],
+                    temperature_2m_min: weather?.daily.temperature_2m_min || [],
                   },
-                });
-              }
+                },
+              });
             }}
             className="ml-2 p-1.5 md:p-2 rounded-full hover:bg-white/10 transition-all"
             aria-label="즐겨찾기"

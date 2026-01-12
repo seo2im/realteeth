@@ -7,7 +7,6 @@ import type { MeteoResponse } from '../../entities/weather/model/type';
 import useContextMenuStore from '../model/contextMenuStore';
 import { ContextMenu } from '../../shared/ui/contextMenu/contextMenu';
 import RenameModal from './renameModal';
-import { useNotify } from '../../features/notify/model/useNotify';
 
 type FavoriteLocationProps = FavoriteLocation & {
   onClick: (address: string) => void;
@@ -32,7 +31,6 @@ function FavoriteLocationCard({
       })
     ),
   });
-  const { show } = useNotify();
   const open = useContextMenuStore((state) => state.open);
   const x = useContextMenuStore((state) => state.x);
   const y = useContextMenuStore((state) => state.y);
@@ -41,8 +39,7 @@ function FavoriteLocationCard({
   const onClickDelete = useCallback(() => {
     close();
     deleteFavorite(id);
-    show({ id: 'favorite_deleted', type: 'warning', message: '즐겨찾기에서 삭제되었습니다.' });
-  }, [deleteFavorite, id, show, close]);
+  }, [deleteFavorite, id, close]);
   useEffect(() => {
     if (data) {
       patchFavorite({
@@ -88,7 +85,6 @@ function FavoriteLocationCard({
             if (card) {
               const cardRect = card.getBoundingClientRect();
               const buttonRect = button.getBoundingClientRect();
-              // 버튼 아래 왼쪽 정렬
               const relativeX = buttonRect.left - cardRect.left;
               const relativeY = buttonRect.bottom - cardRect.top;
               open({ x: relativeX, y: relativeY, id: id });
@@ -117,10 +113,22 @@ function FavoriteLocationCard({
       </div>
       {id === contextMenuId && (
         <ContextMenu position={{ x, y }} visible={true} onClose={close}>
-          <div className="text-black" onClick={onModalOpen}>
+          <div
+            className="text-black"
+            onClick={(e) => {
+              e.stopPropagation();
+              onModalOpen();
+            }}
+          >
             이름 변경하기
           </div>
-          <div className="text-red-600" onClick={onClickDelete}>
+          <div
+            className="text-red-600"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClickDelete();
+            }}
+          >
             삭제하기
           </div>
         </ContextMenu>

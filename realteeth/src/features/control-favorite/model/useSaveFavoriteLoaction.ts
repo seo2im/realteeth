@@ -30,7 +30,8 @@ export function useSaveFavoriteLocation() {
     (location: FavoriteLocation) => {
       setFavorites((prev) => {
         // 이미 존재하는지 확인
-        if (prev.find((item) => item.id === location.id)) {
+        const existing = prev.find((item) => item.id === location.id);
+        if (existing) {
           show({ id: 'favorite_exists', type: 'danger', message: '이미 추가된 장소입니다.' });
           return prev;
         }
@@ -63,13 +64,17 @@ export function useSaveFavoriteLocation() {
   }, []);
 
   // 즐겨찾기 삭제
-  const deleteFavorite = useCallback((id: string) => {
-    setFavorites((prev) => {
-      const updated = prev.filter((item) => item.id !== id);
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-      return updated;
-    });
-  }, []);
+  const deleteFavorite = useCallback(
+    (id: string) => {
+      setFavorites((prev) => {
+        const updated = prev.filter((item) => item.id !== id);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        return updated;
+      });
+      show({ id: 'favorite_deleted', type: 'warning', message: '즐겨찾기에서 삭제되었습니다.' });
+    },
+    [show]
+  );
 
   // 모든 즐겨찾기 삭제
   const clearFavorites = useCallback(() => {

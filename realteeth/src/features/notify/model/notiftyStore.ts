@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { devtools } from 'zustand/middleware';
 import type { AlertType } from '../../../shared/ui/alert/alert.type';
 
 export type NotifyStore = {
@@ -9,12 +10,14 @@ export type NotifyStore = {
   close: () => void;
 };
 
-export const useNotifyStore = create<NotifyStore>()((set) => ({
-  id: '',
-  message: '',
-  type: 'info',
-  open: (id: string, message: string, type: AlertType) => set(() => ({ id, message, type })),
-  close: () => set(() => ({ id: '', message: '', type: 'info' })),
-}));
+export const useNotifyStore = create<NotifyStore>()(
+  devtools((set) => ({
+    id: '',
+    message: '',
+    type: 'info',
+    open: (id: string, message: string, type: AlertType) => set(() => ({ id, message, type })),
+    close: () => set(() => ({ id: '', message: '', type: 'info' })),
+  }))
+);
 
 export default useNotifyStore;
