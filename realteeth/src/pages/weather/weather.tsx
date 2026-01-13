@@ -24,7 +24,7 @@ export function WeatherPage() {
           saveFavorite={saveFavorite}
           isLoading={isLoading}
         />
-        <DailyWeather weather={uiData?.weather} />
+        <DailyWeather weather={uiData?.weather} isLoading={isLoading} />
         <Favorites
           favorites={favorites}
           deleteFavorite={deleteFavorite}

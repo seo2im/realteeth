@@ -10,7 +10,13 @@ import {
 import type { WeatherUiData } from '@entities/uiData/model/weather.type';
 import { Spinner } from '@shared/ui/spinner/spinner';
 
-export function DailyWeather({ weather }: { weather?: WeatherUiData['weather'] }) {
+export function DailyWeather({
+  weather,
+  isLoading,
+}: {
+  weather?: WeatherUiData['weather'];
+  isLoading: boolean;
+}) {
   const hourlyData =
     weather?.hourly.time.map((time, index) => ({
       time: time.slice(11, 16),
@@ -20,7 +26,7 @@ export function DailyWeather({ weather }: { weather?: WeatherUiData['weather'] }
     <div className="bg-white/20 backdrop-blur-md rounded-2xl md:rounded-3xl p-6 md:p-8 text-white shadow-xl">
       <h2 className="text-xl md:text-2xl mb-4 md:mb-6">시간별 기온</h2>
       <div className="w-full" style={{ height: '280px' }}>
-        {!weather ? (
+        {!weather || isLoading ? (
           <div className="h-75 flex justify-center items-center">
             <Spinner size="lg" />
           </div>
