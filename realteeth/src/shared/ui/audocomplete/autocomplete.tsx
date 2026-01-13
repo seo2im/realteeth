@@ -34,6 +34,18 @@ export function Autocomplete({
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<number | undefined>(undefined);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const pagedSuggestions = filteredSuggestions.slice(page * maxResults, (page + 1) * maxResults);
+
+  useEffect(() => {
+    if (highlighted >= 0 && itemRefs.current[highlighted]) {
+      if (highlighted === pagedSuggestions.length - 1 && listRef.current) {
+        listRef.current.scrollTop = listRef.current.scrollHeight;
+      } else {
+        itemRefs.current[highlighted]?.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [highlighted, page, pagedSuggestions.length]);
 
   const filterData = useMemo(
     () => (query: string) => {
@@ -87,24 +99,30 @@ export function Autocomplete({
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLInputElement>) => {
-      if (!isOpen || filteredSuggestions.length === 0) return;
+      if (!isOpen || pagedSuggestions.length === 0) return;
       if (e.key === 'ArrowDown') {
-        setHighlighted((prev) => (prev + 1) % filteredSuggestions.length);
+        setHighlighted((prev) => {
+          const maxIdx = pagedSuggestions.length - 1;
+          if (prev < 0) return 0;
+          if (prev < maxIdx) return prev + 1;
+          return maxIdx;
+        });
         e.preventDefault();
       } else if (e.key === 'ArrowUp') {
-        setHighlighted(
-          (prev) => (prev - 1 + filteredSuggestions.length) % filteredSuggestions.length
-        );
+        setHighlighted((prev) => {
+          if (prev > 0) return prev - 1;
+          return 0;
+        });
         e.preventDefault();
       } else if (e.key === 'Enter' && highlighted >= 0) {
-        handleSelect(filteredSuggestions[highlighted]);
+        handleSelect(pagedSuggestions[highlighted]);
         e.preventDefault();
       } else if (e.key === 'Escape') {
         setIsOpen(false);
         setHighlighted(-1);
       }
     },
-    [handleSelect, highlighted, isOpen, filteredSuggestions]
+    [handleSelect, highlighted, isOpen, pagedSuggestions]
   );
 
   const handleBlur = useCallback(() => {
@@ -133,9 +151,12 @@ export function Autocomplete({
           ref={listRef}
           className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded shadow-md max-h-100 overflow-y-auto z-10"
         >
-          {filteredSuggestions.slice(page * maxResults, (page + 1) * maxResults).map((s, i) => (
+          {pagedSuggestions.map((s, i) => (
             <div
               key={s}
+              ref={(el) => {
+                itemRefs.current[i] = el;
+              }}
               className={`px-3 py-2 cursor-pointer transition-colors ${
                 i === highlighted
                   ? 'bg-blue-100 text-blue-700 font-semibold'
@@ -157,7 +178,7 @@ export function Autocomplete({
                 setHighlighted(-1);
                 setPage((p) => Math.max(0, p - 1));
               }}
-              className="px-2 py-1 text-sm bg-black border rounded disabled:opacity-50"
+              className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-200 border rounded disabled:opacity-50"
             >
               이전
             </button>
@@ -177,7 +198,7 @@ export function Autocomplete({
                   setPage((p) => p + 1);
                 }
               }}
-              className="px-2 py-1 text-sm bg-black border rounded disabled:opacity-50"
+              className="px-2 py-1 text-sm bg-blue-500 hover:bg-blue-200 border rounded disabled:opacity-50"
             >
               다음
             </button>

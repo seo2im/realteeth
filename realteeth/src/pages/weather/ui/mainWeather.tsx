@@ -51,17 +51,17 @@ export function MainWeather({
         <div className="flex justify-center items-center h-75">{error.message}</div>
       ) : (
         <div className="flex flex-col items-center text-center gap-4 md:gap-6">
-          <div className="flex items-center gap-2 text-white/90">
-            <span className="text-lg md:text-xl">{name}</span>
-            <span className="text-sm md:text-base">({address})</span>
-          </div>
           <button
             onClick={addFavorite}
-            className="ml-2 p-1.5 md:p-2 rounded-full hover:bg-white/10 transition-all"
+            className="ml-2 px-4 py-1.5 rounded-full hover:bg-white/10 transition-all bg-blue-500"
             aria-label="즐겨찾기"
           >
             즐겨찾기 추가
           </button>
+          <div className="flex flex-col md:flex-row items-center gap-2 text-white/90">
+            <span className="text-lg md:text-xl">{name}</span>
+            <span className="text-sm md:text-base">({address})</span>
+          </div>
           <div className="flex items-baseline gap-2">
             <span className="text-7xl md:text-8xl lg:text-9xl font-light">
               {weather?.current.temperature_2m}°
