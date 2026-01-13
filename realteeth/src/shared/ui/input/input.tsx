@@ -40,7 +40,6 @@ export function Input({
     return hoverState;
   }, [disabled, error, hoverState]);
 
-  // Tailwind 클래스 생성
   const inputClasses = useMemo(() => {
     const baseClasses = 'w-full box-border outline-none transition-colors flex-1 min-w-0';
     const sizeClasses = 'text-base leading-6 px-4 py-3';
@@ -48,7 +47,6 @@ export function Input({
       ? 'border-2 border-r-0 border-white/30 rounded-l-lg rounded-r-none text-white bg-white/10 font-bold'
       : 'border-2 border-white/30 rounded-lg text-white bg-white/10 font-bold';
 
-    // State 클래스
     let stateClasses = '';
     switch (state) {
       case 'disabled':

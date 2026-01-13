@@ -26,17 +26,14 @@ function getInitialFavorites(): FavoriteLocation[] {
 export function useSaveFavoriteLocation() {
   const [favorites, setFavorites] = useState<FavoriteLocation[]>(getInitialFavorites());
   const { show } = useNotify();
-  // 즐겨찾기 저장
   const saveFavorite = useCallback(
     (location: FavoriteLocation) => {
       setFavorites((prev) => {
-        // 이미 존재하는지 확인
         const existing = prev.find((item) => item.id === location.id);
         if (existing) {
           show({ id: 'favorite_exists', type: 'danger', message: '이미 추가된 장소입니다.' });
           return prev;
         }
-        // 최대 개수 초과 확인
         if (prev.length >= MAX_FAVORITES) {
           show({
             id: 'favorite_max_limit',
@@ -64,7 +61,6 @@ export function useSaveFavoriteLocation() {
     });
   }, []);
 
-  // 즐겨찾기 삭제
   const deleteFavorite = useCallback(
     (id: string) => {
       setFavorites((prev) => {
@@ -77,7 +73,6 @@ export function useSaveFavoriteLocation() {
     [show]
   );
 
-  // 모든 즐겨찾기 삭제
   const clearFavorites = useCallback(() => {
     setFavorites([]);
     localStorage.removeItem(STORAGE_KEY);
@@ -91,7 +86,6 @@ export function useSaveFavoriteLocation() {
     });
   }, []);
 
-  // 특정 즐겨찾기 존재 여부 확인
   const isFavorite = useCallback(
     (id: string) => {
       return favorites.some((item) => item.id === id);

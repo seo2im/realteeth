@@ -1,6 +1,5 @@
 import type { SnackbarAnimation } from './snackbar.type';
 
-// Only support 'bottom' position animations
 export const snackbarAnimationKeyframes: Record<SnackbarAnimation, string> = {
   fade: `
     @keyframes snackbar-fade-in {

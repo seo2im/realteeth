@@ -68,8 +68,6 @@ export function Autocomplete({
     };
   }, [inputValue, filterData, debounceMs]);
 
-  // inputValue/filterData가 바뀔 때만 page를 0으로 초기화 (moved to handleInputChange)
-
   const handleInputChange = useCallback((value: string) => {
     setInputValue(value);
     setIsOpen(true);

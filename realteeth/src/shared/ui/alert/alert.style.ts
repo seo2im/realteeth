@@ -1,6 +1,5 @@
 import type { AlertType, AlertVariant } from './alert.type';
 
-// 사이즈별 클래스명
 const sizeClasses: Record<string, { container: string; head: string }> = {
   sm: {
     container: 'text-sm leading-5',
@@ -16,7 +15,6 @@ const sizeClasses: Record<string, { container: string; head: string }> = {
   },
 };
 
-// 타입별 색상 클래스명 (filled)
 const filledVariantClasses: Record<AlertType, string> = {
   info: 'bg-blue-500 text-white',
   success: 'bg-green-500 text-white',
@@ -24,7 +22,6 @@ const filledVariantClasses: Record<AlertType, string> = {
   danger: 'bg-red-500 text-white',
 };
 
-// 타입별 색상 클래스명 (outlined)
 const outlinedVariantClasses: Record<AlertType, string> = {
   info: 'bg-transparent border border-blue-500 text-blue-500',
   success: 'bg-transparent border border-green-500 text-green-500',
@@ -32,9 +29,6 @@ const outlinedVariantClasses: Record<AlertType, string> = {
   danger: 'bg-transparent border border-red-500 text-red-500',
 };
 
-/**
- * Alert 컨테이너 클래스명을 생성합니다
- */
 export function getAlertClasses(
   type: AlertType,
   size: string,
@@ -49,9 +43,6 @@ export function getAlertClasses(
   return `rounded px-4 py-3 ${variantClass} ${sizeClass} ${fontWeight}`.trim();
 }
 
-/**
- * Alert 헤더 클래스명을 생성합니다
- */
 export function getAlertHeadClasses(type: AlertType, size: string, variant: AlertVariant): string {
   const variantClass =
     variant === 'outlined' ? outlinedVariantClasses[type] : filledVariantClasses[type];

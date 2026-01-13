@@ -45,22 +45,18 @@ export function ContextMenu({
         let adjustedX = position.x;
         let adjustedY = position.y;
 
-        // 부모 요소의 오른쪽 경계를 넘는 경우
         if (adjustedX + menuRect.width > parentRect.width) {
           adjustedX = parentRect.width - menuRect.width - 10;
         }
 
-        // 부모 요소의 왼쪽 경계를 넘는 경우
         if (adjustedX < 0) {
           adjustedX = 10;
         }
 
-        // 부모 요소의 아래쪽 경계를 넘는 경우
         if (adjustedY + menuRect.height > parentRect.height) {
-          adjustedY = position.y - menuRect.height; // 버튼 위쪽에 표시
+          adjustedY = position.y - menuRect.height;
         }
 
-        // 부모 요소의 위쪽 경계를 넘는 경우
         if (adjustedY < 0) {
           adjustedY = 10;
         }
