@@ -15,8 +15,9 @@ function getInitialFavorites(): FavoriteLocation[] {
   if (stored) {
     try {
       return JSON.parse(stored as string) as FavoriteLocation[];
-    } catch (error) {
-      console.error('Failed to parse favorite locations:', error);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (e) {
+      return [];
     }
   }
   return [];

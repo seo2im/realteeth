@@ -20,7 +20,7 @@ export function Autocomplete({
   placeholder = 'Type to search...',
   disabled = false,
   width = '100%',
-  maxResults = 50,
+  maxResults = 20,
   debounceMs = 300,
   onSearch,
   withSearchButton = false,
@@ -30,6 +30,7 @@ export function Autocomplete({
   const [isOpen, setIsOpen] = useState(false);
   const [highlighted, setHighlighted] = useState(-1);
   const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
+  const [page, setPage] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<number | undefined>(undefined);
@@ -40,10 +41,15 @@ export function Autocomplete({
         return [];
       }
       const filtered = data.filter((item) => item.includes(query));
-      return filtered.slice(0, maxResults);
+      return filtered;
     },
-    [data, maxResults]
+    [data]
   );
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = 0;
+    }
+  }, [page]);
 
   useEffect(() => {
     if (debounceTimerRef.current) {
@@ -62,10 +68,13 @@ export function Autocomplete({
     };
   }, [inputValue, filterData, debounceMs]);
 
+  // inputValue/filterData가 바뀔 때만 page를 0으로 초기화 (moved to handleInputChange)
+
   const handleInputChange = useCallback((value: string) => {
     setInputValue(value);
     setIsOpen(true);
     setHighlighted(0);
+    setPage(0);
   }, []);
 
   const handleSelect = useCallback(
@@ -124,9 +133,9 @@ export function Autocomplete({
       {isOpen && filteredSuggestions.length > 0 && (
         <div
           ref={listRef}
-          className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded shadow-md max-h-50 overflow-y-auto z-10"
+          className="absolute top-full left-0 right-0 bg-white border border-gray-300 rounded shadow-md max-h-100 overflow-y-auto z-10"
         >
-          {filteredSuggestions.map((s, i) => (
+          {filteredSuggestions.slice(page * maxResults, (page + 1) * maxResults).map((s, i) => (
             <div
               key={s}
               className={`px-3 py-2 cursor-pointer transition-colors ${
@@ -140,6 +149,41 @@ export function Autocomplete({
               {s}
             </div>
           ))}
+          <div className="flex justify-between items-center px-2 py-1 bg-gray-50 border-t">
+            <button
+              disabled={page === 0}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setHighlighted(-1);
+                setPage((p) => Math.max(0, p - 1));
+              }}
+              className="px-2 py-1 text-sm bg-black border rounded disabled:opacity-50"
+            >
+              이전
+            </button>
+            <span className="text-xs text-gray-500">
+              {page + 1} / {Math.ceil(filteredSuggestions.length / maxResults)}
+            </span>
+            <button
+              disabled={(page + 1) * maxResults >= filteredSuggestions.length}
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setHighlighted(-1);
+                if (page === 0) {
+                  setPage(1);
+                } else {
+                  setPage((p) => p + 1);
+                }
+              }}
+              className="px-2 py-1 text-sm bg-black border rounded disabled:opacity-50"
+            >
+              다음
+            </button>
+          </div>
         </div>
       )}
     </div>

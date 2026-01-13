@@ -18,6 +18,7 @@ export function Searchbar({ onSearch }: { onSearch: (address: string, name: stri
         onSearch={debouncedSetAddress}
         withSearchButton
         searchButtonLabel="검색"
+        placeholder="지역명을 입력해주세요"
       />
     </div>
   );
