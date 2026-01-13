@@ -4,6 +4,7 @@ import type { WeatherUiData } from '@entities/uiData/model/weather.type';
 import { useDebounce } from '@shared/utils';
 
 export function MainWeather({
+  name,
   weather,
   address,
   geocode,
@@ -11,6 +12,7 @@ export function MainWeather({
   saveFavorite,
   isLoading,
 }: {
+  name?: string;
   weather?: WeatherUiData['weather'];
   address?: string;
   geocode?: WeatherUiData['geocode'];
@@ -21,7 +23,7 @@ export function MainWeather({
   const addFavorite = useDebounce(() => {
     saveFavorite({
       id: `${geocode?.latitude}-${geocode?.longitude}`,
-      name: address || 'Unnamed Location',
+      name: name || address || 'Unnamed Location',
       address: address || '',
       geocode: {
         latitude: geocode?.latitude || 0,
@@ -50,7 +52,8 @@ export function MainWeather({
       ) : (
         <div className="flex flex-col items-center text-center gap-4 md:gap-6">
           <div className="flex items-center gap-2 text-white/90">
-            <span className="text-lg md:text-xl">{address}</span>
+            <span className="text-lg md:text-xl">{name}</span>
+            <span className="text-sm md:text-base">({address})</span>
           </div>
           <button
             onClick={addFavorite}

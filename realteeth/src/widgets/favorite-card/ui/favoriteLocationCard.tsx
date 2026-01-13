@@ -9,7 +9,7 @@ import { RenameModal } from '@widgets/rename-modal';
 import { useDebounce } from '@shared/utils';
 
 type FavoriteLocationProps = FavoriteLocation & {
-  onClick: (address: string) => void;
+  onSearch: (address: string, name: string) => void;
   patchFavorite: (location: FavoriteLocation) => void;
   deleteFavorite: (id: string) => void;
 };
@@ -21,7 +21,7 @@ export function FavoriteLocationCard({
   weather,
   patchFavorite,
   deleteFavorite,
-  onClick,
+  onSearch,
 }: FavoriteLocationProps) {
   const { data } = useQuery<MeteoResponse>({
     ...getWeatherQuery(
@@ -66,7 +66,7 @@ export function FavoriteLocationCard({
   }, [close]);
 
   const debouncedCardClick = useDebounce(() => {
-    if (onClick) onClick(address);
+    if (onSearch) onSearch(address, name);
   }, 300);
 
   const onMenuOpen = useCallback(

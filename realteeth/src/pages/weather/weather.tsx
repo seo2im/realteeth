@@ -9,14 +9,15 @@ import { useInformation } from '@features/weather-by-location';
 export function WeatherPage() {
   const [uiData, setUiData] = useState<WeatherUiData | undefined>(undefined);
   useCurrentInformation(setUiData);
-  const { setAddress, isLoading } = useInformation(setUiData);
+  const { onSearch, isLoading } = useInformation(setUiData);
   const { favorites, saveFavorite, deleteFavorite, patchFavorite } = useSaveFavoriteLocation();
 
   return (
     <div className="min-h-screen bg-linear-to-br from-blue-400 via-blue-500 to-blue-600 p-4 md:p-6 lg:p-8 min-w-screen">
       <div className="max-w-7xl mx-auto space-y-4 md:space-y-6">
-        <Searchbar setAddress={setAddress} />
+        <Searchbar onSearch={onSearch} />
         <MainWeather
+          name={uiData?.name}
           weather={uiData?.weather}
           address={uiData?.address}
           geocode={uiData?.geocode}
@@ -29,7 +30,7 @@ export function WeatherPage() {
           favorites={favorites}
           deleteFavorite={deleteFavorite}
           patchFavorite={patchFavorite}
-          setAddress={setAddress}
+          onSearch={onSearch}
         />
       </div>
     </div>

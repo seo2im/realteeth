@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/set-state-in-effect */
 import { useQuery } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { GeoResponse } from '@entities/geocode';
 import { generateGeoParamter, getGeocodeQuery } from '@entities/geocode';
 import { getWeatherQuery, generateWeatherParameter } from '@entities/weather';
@@ -9,6 +9,7 @@ import { GeocodeError, WeatherDataError } from '@entities/error';
 
 export function useInformation(setUiData: (data: WeatherUiData) => void) {
   const [address, setAddress] = useState<string>('');
+  const [refineName, setRefineName] = useState<string>('');
   const {
     data: geocodeData,
     refetch: geoRefetch,
@@ -43,7 +44,8 @@ export function useInformation(setUiData: (data: WeatherUiData) => void) {
   useEffect(() => {
     if (geocodeData && weatherData) {
       setUiData({
-        address: address,
+        name: refineName || address,
+        address: geocodeData.response.refined.text,
         geocode: {
           latitude: parseFloat(geocodeData.response.result.point.y),
           longitude: parseFloat(geocodeData.response.result.point.x),
@@ -51,7 +53,7 @@ export function useInformation(setUiData: (data: WeatherUiData) => void) {
         weather: weatherData,
       });
     }
-  }, [geocodeData, weatherData, setUiData, address]);
+  }, [geocodeData, weatherData, setUiData, refineName, address]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   useEffect(() => {
     if (geoLoading || weatherLoading) {
@@ -75,10 +77,17 @@ export function useInformation(setUiData: (data: WeatherUiData) => void) {
       });
     }
   }, [geoError, weatherError, setUiData]);
+  const onSearch = useCallback(
+    function (address: string, name: string) {
+      setAddress(address);
+      setRefineName(name);
+    },
+    [setAddress, setRefineName]
+  );
 
   return {
     geoRefetch,
-    setAddress,
     isLoading,
+    onSearch,
   };
 }

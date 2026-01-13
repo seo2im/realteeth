@@ -2,6 +2,7 @@ import type { WeatherUiData } from '@entities/uiData';
 
 export function generateEmptyWeatherUiData(): WeatherUiData {
   return {
+    name: '',
     address: '',
     geocode: {
       latitude: 0,

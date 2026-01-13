@@ -1,6 +1,7 @@
 import type { WeatherError } from '@entities/error';
 
 export type WeatherUiData = {
+  name: string;
   address: string;
   geocode: {
     latitude: number;

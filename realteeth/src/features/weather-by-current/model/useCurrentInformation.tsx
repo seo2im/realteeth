@@ -45,6 +45,7 @@ export function useCurrentInformation(setUiData: (data: WeatherUiData) => void) 
   useEffect(() => {
     if (addressData && weatherData) {
       setUiData({
+        name: addressData.response.result[0].text,
         address: addressData.response.result[0].text,
         geocode: {
           latitude: currentPosition?.latitude || 0,

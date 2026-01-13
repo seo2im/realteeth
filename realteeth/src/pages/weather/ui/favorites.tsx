@@ -5,12 +5,12 @@ export function Favorites({
   favorites,
   patchFavorite,
   deleteFavorite,
-  setAddress,
+  onSearch,
 }: {
   favorites: FavoriteLocation[];
   patchFavorite: (locations: FavoriteLocation) => void;
   deleteFavorite: (id: string) => void;
-  setAddress: (address: string) => void;
+  onSearch: (address: string, name: string) => void;
 }) {
   return (
     <div className="bg-white/20 backdrop-blur-md rounded-2xl md:rounded-3xl p-6 md:p-8 text-white shadow-xl">
@@ -23,7 +23,7 @@ export function Favorites({
             {...location}
             patchFavorite={patchFavorite}
             deleteFavorite={deleteFavorite}
-            onClick={setAddress}
+            onSearch={onSearch}
           />
         ))}
       </div>

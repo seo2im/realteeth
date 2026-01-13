@@ -42,7 +42,7 @@ export function generateGeoParamter({ address }: { address: string }): GeoParame
     address,
     key: import.meta.env.VITE_GEO_API_KEY,
     format: 'json',
-    refine: false,
+    refine: true,
     simple: false,
     crs: 'epsg:4326',
     type: 'parcel',
